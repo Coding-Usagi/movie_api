@@ -7,5 +7,57 @@
 <body>
   <h1> Documentation Page </h1>
   <p> Cat ipsum dolor sit amet, himalayan and himalayan. </p>
+  <table>
+    <tr>
+      <th>Request</th>
+      <th>URL</th>
+      <th>Response</th>
+    </tr>
+    <tr>
+      <td>GET</td>
+      <td>/movies</td>
+      <td>Return a list holding data about all movies</td>
+    </tr>
+    <tr>
+      <td>GET</td>
+      <td>/movies/:title</td>
+      <td>Return data about one movie, containing description, genre, direction, and image URL</td>
+    </tr>
+    <tr>
+      <td>GET</td>
+      <td>/movies/:genre</td>
+      <td>Return data about one movie's genre</td>
+    </tr>
+    <tr>
+      <td>GET</td>
+      <td>director/:name</td>
+      <td>Return data about one movie's director</td>
+    </tr>
+    <tr>
+      <td>POST</td>
+      <td>/register</td>
+      <td>Return data about a new user who registered</td>
+    </tr>
+    <tr>
+      <td>PUT</td>
+      <td>/users/:id/:user_info</td>
+      <td>Text message indicating user info was updated</td>
+    </tr>
+    <tr>
+      <td>POST</td>
+      <td>users/:id/:favorites</td>
+      <td>Text message listing movies added to favorites</td>
+    </tr>
+    <tr>
+      <td>DELETE</td>
+      <td>/users/:id/favorites</td>
+      <td>Text message indicating a movie was removed from favorites</td>
+    </tr>
+    <tr>
+      <td>DELETE</td>
+      <td>/users/:id/unregister</td>
+      <td>Text message telling a user their account is deregistered</td>
+    </tr>
+  </table>
 </body>
 </html>
