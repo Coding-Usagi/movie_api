@@ -8,7 +8,7 @@ const Models = require('./model.js');
 
 const Movies = Models.Movie;
 const Users = Models.User;
-const Genre = Models.Genre;
+const Genres = Models.Genre;
 const Director = Models.Director;
 
 mongoose.connect('mongodb://localhost:27017/my_flix_db', 
@@ -27,7 +27,7 @@ app.get('/', (req, res, next) => {
 
 
 //Get a list of all movies to a user
-app.get('/movies', (req, res,) => {
+app.get('/movies', (req, res) => {
     Movies.find()
     .then ((movies) => {
         res.status(201).json(movies);
@@ -52,10 +52,10 @@ app.get('/movies/:Title', (req,res) => {
 });
 
 //Return data about a movie's genre
-app.get('/genre/:Name', (req, res) => {
-    Genre.findOne({Name: req.params.Name})
+app.get('/genres/:Name', (req, res) => {
+    Genres.findOne({Name: req.params.Name})
     .then((genre) => {
-        res.json(genre.Description);
+        res.status(201).json(genre);
     })
     .catch((err) => {
         console.error(err);
