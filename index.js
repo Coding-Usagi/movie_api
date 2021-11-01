@@ -1,154 +1,194 @@
 const express = require('express');
-morgan = require('morgan');
+const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const app = express();
 
+const mongoose = require('mongoose');
+const Models = require('./model.js');
+
+const Movies = Models.Movie;
+const Users = Models.User;
+const Genre = Models.Genre;
+const Director = Models.Director;
+
+mongoose.connect('mongodb://localhost:27017/my_flix_db', 
+{useNewUrlParser: true, useUnifiedTopology: true});
+
 app.use(morgan ('common'));
 app.use(express.static('public'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 
-let topTenMovies = [
-    {
-        title: 'Demon Slayer: Kimetsu no Yaiba – The Movie: Mugen Train',
-        director: 'Haruo Sotozaki',
-        genre: [
-            'Animation',
-            'Action',
-            'Adventure'
-        ]
-    },
-    {
-        title: 'A Silent Voice',
-        director: '	Naoko Yamada',
-        genre: [
-            'Drama'
-        ]
-    },
-    {
-        title: 'The Boy and the Beast',
-        director: 'Mamoru Hosoda',
-        genre: [
-            'Adventure',
-            'Supernatural'
-        ]
-    },
-    {
-        title: 'Ponyo',
-        director: '	Hayao Miyazaki',
-        genre: [
-            'Animation',
-            'Adventure',
-            'Comedy',
-            'Family',
-            'Fantasy'
-        ]
-    },
-    {
-        title: 'Dragon Ball Super: Broly',
-        director: 'Tatsuya Nagamine',
-        genre: [
-            'Action',
-            'Adventure',
-            'Fantasy'
-        ]
-    },
-    {
-        title: 'Patema Inverted',
-        director: '	Yasuhiro Yoshiura',
-        genre: [
-            'Adventure',
-            'Sci-Fi'
+app.get('/', (req, res, next) => {
+    res.send('Welcome to myFlix App.');
+});
 
-        ]
-    },
-    {
-        title: 'Your Name',
-        director: '	Makoto Shinkai',
-        genre: [
-            'Drama',
-            'Romance',
-            'Supernatural'
-        ]
-    },
-    {
-        title: 'The Girl Who Leapt Through Time',
-        director: '	Mamoru Hosoda',
-        genre: [
-            'Drama',
-            'Romance',
-            'Sci-Fi'
-        ]
-    },
-    {
-        title: 'Paprika',
-        director: 'Satoshi Kon',
-        genre: [
-            'AvantGarde',
-            'Fantasy',
-            'Horror',
-            'Mystery',
-            'Sci-Fi',
-            'Suspense'
-        ]
-    },
-    {
-        title: 'Clannad Movie',
-        director: 'Dezaki, Osamu',
-        genre: [
-            'Drama',
-            'Fantasy',
-            'Romance'
-        ]
-    }
-];
 
 //Get a list of all movies to a user
 app.get('/movies', (req, res,) => {
-        res.json(topTenMovies);
+    Movies.find()
+    .then ((movies) => {
+        res.status(201).json(movies);
+    })    
+    .catch ((err) => {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
     });
+});
 
 //Return data about a single movie by title
-app.get('/movies/:title', (req,res) => {
-    res.send('Successful GET request returning movies by title.');
+app.get('/movies/:Title', (req,res) => {
+    Movies.findOne({Title: req.params.Title})
+    .then((title) => {
+        res.json(title);
+    })
+    .catch((err) => {
+        console.error(err);
+        res.status(500).send('Error :' + err);
+    });
+    //res.send('Successful GET request returning movies by title.');
 });
 
 //Return data about a movie's genre
-app.get('/movies/:genre', (req, res) => {
-    res.send('Successful GET request returning movies genre.');
+app.get('/genre/:Name', (req, res) => {
+    Genre.findOne({Name: req.params.Name})
+    .then((genre) => {
+        res.json(genre.Description);
+    })
+    .catch((err) => {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+    });
+    //res.send('Successful GET request returning movies genre.');
 });
 
 //Return information about a movie's director
-app.get('/director', (req, res) => {
-    res.send('Successful GET request returning information about director.');
+app.get('/director/Name', (req, res) => {
+    Director.findOne({Name: req.params.Name})
+    .then((director) => {
+        res.json(director);
+    })
+    .catch((err) => {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+    });
+
+    //res.send('Successful GET request returning information about director.');
 });
 
-//Allow new users to register
-app.post('/register', (req, res) => {
-    res.send('Successful POST request a new user has been registered.');
+//Add a new user
+/* Expect JSON in format
+{
+    ID: Integer,
+    Username: String,
+    Password: String,
+    Email: String,
+    Birthday: Date
+}*/
+app.post('/users', (req, res) => {
+    Users.findOne({Username: req.body.Username})
+    .then((user) => {
+        if(user){
+            return res.status(400).send(req.body.Username + 'already exists');
+        } else {
+            Users
+            .create ({
+                Username: req.body.Username,
+                Password: req.body.Password,
+                Email: req.body.Email,
+                Birthday: req.body.Birthday
+            })
+            .then((user) => {res.status(201).json(user)})
+            .catch((error) => {
+                console.error(error);
+                res.status(500).send('Error: ' + error);
+            })
+        }
+    })
+    .catch ((error) => {
+        console.error(error);
+        res.status(500).send('Error: ' + error);
+    });
+    //res.send('Successful POST request a new user has been registered.');
 });
 
 //Allow users to update their user information
-app.put('/users/:id/:user_info', (req, res) => {
-    res.send('Successful PUT request user has updated their information.');
+app.put('/users/Username', (req, res) => {
+    Users.findOneAndUpdate({Username: req.params.Username},
+        {
+            $set: {
+                Username: req.body.Username,
+                Password: req.body.Password,
+                Email: req.body.Email,
+                Birthday: req.body.Birthday
+            }
+        },
+        {new: true}, //Makes sure the updated doc is returned
+        (err, updateUser) => {
+            if (err) {
+                console.log(err);
+                res.status(500).send('Error: ' + err);
+            } else {
+                res.json(updatedUser)
+            }
+        });
+    //res.send('Successful PUT request user has updated their information.');
 });
 
 //Allow users to add a movie to their favorites list
-app.post('/users/:id/:favorites', (req, res) => {
-    res.send('Successful POST request of user adding a movie to their favorites.');
+app.post('/users/:Username/Movies/:MovieID', (req, res) => {
+    Users.findOneAndUpdate({Username: req.params.Username}, 
+        {
+        $push: {FavoriteMovies: req.params.MovieID}
+    },
+    {new: true}, //Makes sure the updated doc is returned
+    (err, updatedUser) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error: ' + err);
+        } else {
+            res.json(updatedUser);
+        }
+    });
+    //res.send('Successful POST request of user adding a movie to their favorites.');
 });
 
 //Allow users to remove a movie from their favorites list 
-app.delete('/users/:id/:favorites', (req, res) => {
-    res.send('Successful DELETE request of user removing a movie from their favorites list.');
+app.delete('/users/:Username/Movies/:MovieID', (req, res) => {
+    Users.findOneAndRemove({Username: req.params.Username})
+    .then((FavoriteMovies) => {
+        if(!FavoriteMovies) {
+            res.status(400).send(req.params.MovieID + 'was not found');
+        } else {
+            res.status(200).send(req.params.MovieID + 'was deleted');
+        }
+
+    })
+    .catch ((err) => {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+    });
+    //res.send('Successful DELETE request of user removing a movie from their favorites list.');
 });
 
 //Allow a user to unregister
-app.delete('/users/:id/:unregister', (req, res) => {
-    res.send('Successful DELETE request of a user unregistering.');
+app.delete('/users/:Username', (req, res) => {
+    Users.findOneAndRemove({Username: req.params.Username})
+    .then((user) => {
+        if(!user) {
+            res.status(400).send(req.params.Username + 'was not found');
+        } else {
+            res.status(200).send(req.params.Username + 'was deleted');
+        }
+    })
+    .catch ((err) => {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+    });
+    //res.send('Successful DELETE request of a user unregistering.');
 });
-
-   // app.get('/', (req, res, next) => {
-     //   res.send('Mugen Train was really good');
-    //});
 
 //Error handling
     app.use((err, req, res, next) => {
