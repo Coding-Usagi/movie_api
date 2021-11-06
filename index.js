@@ -9,7 +9,7 @@ const Models = require('./model.js');
 const Movies = Models.Movie;
 const Users = Models.User;
 const Genres = Models.Genre;
-const Director = Models.Director;
+const Directors = Models.Director;
 
 mongoose.connect('mongodb://localhost:27017/my_flix_db', 
 {useNewUrlParser: true, useUnifiedTopology: true});
@@ -21,7 +21,7 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-app.get('/', (req, res, next) => {
+app.get('/', (req, res) => {
     res.send('Welcome to myFlix App.');
 });
 
@@ -48,7 +48,18 @@ app.get('/movies/:Title', (req,res) => {
         console.error(err);
         res.status(500).send('Error :' + err);
     });
-    //res.send('Successful GET request returning movies by title.');
+});
+
+//Return a list of all genres
+app.get('/genres', (req, res) => {
+    Genres.find()
+    .then((genres) => {
+        res.status(201).json(genres);
+    })
+    .catch((err) => {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+    });
 });
 
 //Return data about a movie's genre
@@ -56,17 +67,41 @@ app.get('/genres/:Name', (req, res) => {
     Genres.findOne({Name: req.params.Name})
     .then((genre) => {
         res.status(201).json(genre);
+        console.log(req.params);
     })
     .catch((err) => {
         console.error(err);
         res.status(500).send('Error: ' + err);
     });
-    //res.send('Successful GET request returning movies genre.');
+});
+
+//Get data about movies by genre
+app.get('/movies/Genre/:Name', (req, res) => {
+    Movies.find({'Genre.Name' : req.params.Name})
+    .then((movies) => {
+        res.status(201).json(movies);
+    })
+    .catch((err) => {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+    });
+});
+
+//Get data on all directors
+app.get('/directors', (req, res) => {
+    Directors.find()
+    .then((directors) => {
+        res.status(201).json(directors);
+    })
+    .catch((err) => {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+    });
 });
 
 //Return information about a movie's director
-app.get('/director/Name', (req, res) => {
-    Director.findOne({Name: req.params.Name})
+app.get('/director/:Name', (req, res) => {
+    Directors.findOne({Name: req.params.Name})
     .then((director) => {
         res.json(director);
     })
