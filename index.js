@@ -23,6 +23,9 @@ app.use(bodyParser.urlencoded({
 
 let auth = require('./auth')(app);
 
+const passport = require('passport');
+require('./passport');
+
 app.get('/', (req, res) => {
     res.send('Welcome to myFlix App.');
 });
