@@ -21,6 +21,8 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
+let auth = require('./auth')(app);
+
 app.get('/', (req, res) => {
     res.send('Welcome to myFlix App.');
 });
@@ -63,23 +65,10 @@ app.get('/genres', (req, res) => {
 });
 
 //Return data about a movie's genre
-app.get('/genres/:Name', (req, res) => {
-    Genres.findOne({Name: req.params.Name})
+app.get('/movies/genre/:name', (req, res) => {
+    Movies.findOne({"Genre.Name": req.params.name})
     .then((genre) => {
         res.status(201).json(genre);
-        console.log(req.params);
-    })
-    .catch((err) => {
-        console.error(err);
-        res.status(500).send('Error: ' + err);
-    });
-});
-
-//Get data about movies by genre
-app.get('/movies/Genre/:Name', (req, res) => {
-    Movies.find({'Genre.Name' : req.params.Name})
-    .then((movies) => {
-        res.status(201).json(movies);
     })
     .catch((err) => {
         console.error(err);
@@ -100,8 +89,8 @@ app.get('/directors', (req, res) => {
 });
 
 //Return information about a movie's director
-app.get('/director/:Name', (req, res) => {
-    Directors.findOne({Name: req.params.Name})
+app.get('/movies/director/:name', (req, res) => {
+    Movies.findOne({ "Director.Name" : req.params.name })
     .then((director) => {
         res.json(director);
     })
@@ -109,9 +98,8 @@ app.get('/director/:Name', (req, res) => {
         console.error(err);
         res.status(500).send('Error: ' + err);
     });
-
-    //res.send('Successful GET request returning information about director.');
 });
+
 
 //Add a new user
 /* Expect JSON in format
@@ -122,10 +110,11 @@ app.get('/director/:Name', (req, res) => {
     Email: String,
     Birthday: Date
 }*/
+
 app.post('/users', (req, res) => {
     Users.findOne({Username: req.body.Username})
     .then((user) => {
-        if(user){
+        if (user){
             return res.status(400).send(req.body.Username + 'already exists');
         } else {
             Users
@@ -146,7 +135,6 @@ app.post('/users', (req, res) => {
         console.error(error);
         res.status(500).send('Error: ' + error);
     });
-    //res.send('Successful POST request a new user has been registered.');
 });
 
 //Allow users to update their user information
