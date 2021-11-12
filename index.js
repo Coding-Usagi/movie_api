@@ -103,6 +103,18 @@ app.get('/movies/director/:name', (req, res) => {
     });
 });
 
+//Return info on all users
+app.get('/users', (req, res) => {
+    Users.find()
+    .then((users) => {
+        res.status(201).json(users);
+    })
+    .catch((err) => {
+        console.error(err);
+        res.status(400).send('Error: ' + err);
+    });
+});
+
 
 //Add a new user
 /* Expect JSON in format
