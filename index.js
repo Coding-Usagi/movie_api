@@ -153,11 +153,10 @@ app.post('/users', (req, res) => {
 });
 
 //Allow users to update their user information
-app.put('/users/:Username', (req, res) => {
-    Users.findOneAndUpdate({Username: req.params.Username},
+app.put('/users/:ID', (req, res) => {
+    Users.findOneAndUpdate({id: req.params.ID},
         {
             $set: {
-                Username: req.body.Username,
                 Password: req.body.Password,
                 Email: req.body.Email,
                 Birthday: req.body.Birthday
@@ -175,10 +174,10 @@ app.put('/users/:Username', (req, res) => {
 });
 
 //Allow users to add a movie to their favorites list
-app.post('/users/:Username/Movies/:MovieID', (req, res) => {
-    Users.findOneAndUpdate({Username: req.params.Username}, 
+app.post('/users/:ID/:movieID', (req, res) => {
+    Users.findOneAndUpdate({Username: req.params.ID}, 
         {
-        $push: {FavoriteMovies: req.params.MovieID}
+        $push: {FavoriteMovies: req.params.movieID}
     },
     {new: true}, //Makes sure the updated doc is returned
     (err, updatedUser) => {
@@ -189,7 +188,6 @@ app.post('/users/:Username/Movies/:MovieID', (req, res) => {
             res.json(updatedUser);
         }
     });
-    //res.send('Successful POST request of user adding a movie to their favorites.');
 });
 
 //Allow users to remove a movie from their favorites list 
