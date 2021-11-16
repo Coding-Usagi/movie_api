@@ -153,7 +153,7 @@ app.post('/users', (req, res) => {
 });
 
 //Allow users to update their user information
-app.put('/users/Username', (req, res) => {
+app.put('/users/:Username', (req, res) => {
     Users.findOneAndUpdate({Username: req.params.Username},
         {
             $set: {
@@ -164,7 +164,7 @@ app.put('/users/Username', (req, res) => {
             }
         },
         {new: true}, //Makes sure the updated doc is returned
-        (err, updateUser) => {
+        (err, updatedUser) => {
             if (err) {
                 console.log(err);
                 res.status(500).send('Error: ' + err);
@@ -172,7 +172,6 @@ app.put('/users/Username', (req, res) => {
                 res.json(updatedUser)
             }
         });
-    //res.send('Successful PUT request user has updated their information.');
 });
 
 //Allow users to add a movie to their favorites list
