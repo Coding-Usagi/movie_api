@@ -115,6 +115,18 @@ app.get('/users', (req, res) => {
     });
 });
 
+//Return info on a user by id
+app.get('/users/:ID', (req, res) => {
+    Users.findOne({id: req.params.ID})
+    .then((users) => {
+        res.status(201).json(users);
+        console.log(req.params.ID);
+    })
+    .catch((err) => {
+        console.error(err);
+        res.status(400).send('Error: ' + err);
+    });
+});
 
 //Add a new user
 /* Expect JSON in format
@@ -157,6 +169,7 @@ app.put('/users/:ID', (req, res) => {
     Users.findOneAndUpdate({id: req.params.ID},
         {
             $set: {
+                Username: req.body.Username,
                 Password: req.body.Password,
                 Email: req.body.Email,
                 Birthday: req.body.Birthday
