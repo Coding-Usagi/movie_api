@@ -159,28 +159,7 @@ app.get('/users/:ID', passport.authenticate('jwt', { session: false }), (req, re
     Birthday: Date
 }*/
 
-app.post('/users', (req, res) => {
-    let hashedPassword = Users.hashPassword(req.body.Password);
-    Users.findOne({Username: req.body.Username}) //Search if a user with the requested username exists
-    .then((user) => {
-        if (user){
-            //If the user is found send a response that it already exists 
-            return res.status(400).send(req.body.Username + 'already exists');
-        } else {
-            Users
-            .create ({
-                Username: req.body.Username,
-                Password: hashedPassword,
-                Email: req.body.Email,
-                Birthday: req.body.Birthday
-            })
-            .then((user) => {res.status(201).json(user)})
-            .catch((error) => {
-                console.error(error);
-                res.status(500).send('Error: ' + error);
-            })
-        }
-    })
+app.post('/users',
 [
     check('Username', 'Username is required').isLength({min: 5}),
     check('Username', 'Username contains non alphanumeric characters - not allowed').isAlphanumeric(),
