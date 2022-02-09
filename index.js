@@ -2,7 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const app = express();
-const {check, validationResult} = require('express-validatior');
+const {check, validationResult} = require('express-validator');
 
 const mongoose = require('mongoose');
 const Models = require('./model.js');
