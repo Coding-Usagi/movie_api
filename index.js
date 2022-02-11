@@ -162,26 +162,25 @@ app.get('/users/:ID', passport.authenticate('jwt', { session: false }), (req, re
 app.post('/users',
 [
     check('Username', 'Username is required').isLength({min: 5}),
-    check('Username', 'Username contains non alphanumeric characters - not allowed').isAlphanumeric(),
+    check('Username', 'Username contains non-alphanumeric characters, not allowed').isAlphanumeric(),
     check('Password', 'Password is required').not().isEmpty(),
     check('Email', 'Email does not appear to be valid').isEmail()
 ],
     (req, res) => {
         //Check the validation object for errors
         let errors = validationResult(req);
-
+console.log();
         if(!errors.isEmpty()) {
             return res.status(422).json({errors: errors.array()});
         }
-
+console.log();
         let hashedPassword = Users.hashPassword(req.body.Password);
-        Users.findOne({Username: req.body.Username}) //Search to see if a user with the username already exists
+        Users.findOne({Username: req.body.Username})
         .then((user) => {
-            if(user) {
-                //If the user is found, send a response that it already exists
+            console.log(); if(user) {
                 return res.status(400).send(req.body.Username + 'already exists');
             } else {
-                Users
+              console.log();  Users
                 .create({
                     Username: req.body.Username,
                     Password: hashedPassword,
@@ -192,7 +191,6 @@ app.post('/users',
             .catch((error) => {
             console.error(error);
             res.status(500).send('Error: ' + error);
-            console.log();
         });
     }
 })
