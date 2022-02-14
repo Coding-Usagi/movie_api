@@ -1,10 +1,10 @@
-const dotenv = require('dotenv').config({path: 'CONNECTION_URI'});
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const app = express();
 const {check, validationResult} = require('express-validator');
 
+require('dotenv').config();
 const mongoose = require('mongoose');
 const Models = require('./model.js');
 
