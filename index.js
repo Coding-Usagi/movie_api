@@ -6,6 +6,8 @@ const {check, validationResult} = require('express-validator');
 
 require('dotenv').config();
 const mongoose = require('mongoose');
+mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true });
+
 const Models = require('./model.js');
 
 const Movies = Models.Movie;
@@ -13,10 +15,8 @@ const Users = Models.User;
 const Genres = Models.Genre;
 const Directors = Models.Director;
 
-
 //mongoose.connect('mongodb://localhost:27017/my_flix_db', 
 //{useNewUrlParser: true, useUnifiedTopology: true});
-mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true });
 
 app.use(morgan ('common'));
 app.use(express.static('public'));
