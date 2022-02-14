@@ -1,4 +1,4 @@
-require('dotenv').config();
+const dotenv = require('dotenv').config({path: 'CONNECTION_URI'});
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
