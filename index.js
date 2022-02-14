@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
@@ -11,6 +12,7 @@ const Movies = Models.Movie;
 const Users = Models.User;
 const Genres = Models.Genre;
 const Directors = Models.Director;
+
 
 //mongoose.connect('mongodb://localhost:27017/my_flix_db', 
 //{useNewUrlParser: true, useUnifiedTopology: true});
