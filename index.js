@@ -170,18 +170,16 @@ app.post('/users',
     (req, res) => {
         //Check the validation object for errors
         let errors = validationResult(req);
-console.log();
         if(!errors.isEmpty()) {
             return res.status(422).json({errors: errors.array()});
         }
-console.log();
         let hashedPassword = Users.hashPassword(req.body.Password);
         Users.findOne({Username: req.body.Username})
         .then((user) => {
             console.log(); if(user) {
                 return res.status(400).send(req.body.Username + 'already exists');
             } else {
-              console.log();  Users
+              Users
                 .create({
                     Username: req.body.Username,
                     Password: hashedPassword,
