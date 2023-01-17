@@ -54,7 +54,7 @@ app.use(cors({
 }));
 
 //Get a list of all movies to a user
-app.get('/movies', function (req, res) { //passport.authenticate('jwt', { session: false }), (req, res) => {
+app.get('/movies', function (req, res) { passport.authenticate('jwt', { session: false }), (req, res) => {
     Movies.find()
     .then ((movies) => {
         res.status(201).json(movies);
